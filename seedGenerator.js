@@ -1,8 +1,9 @@
 const fs = require('fs');
+const QRCode = require('qrcode');
 const wordArray = fs.readFileSync('./wordBank.txt').toString().split('\n');
 
 // amount of strings generated in json
-const seedCount = 10;
+const seedCount = 30;
 const seedLength = 4;
 
 let seedArray = [];
@@ -10,8 +11,11 @@ let seedArray = [];
 for (var i = seedCount; i >= 1; i--) {
   let newSeed = [];
   let completedSeed = addComponents(newSeed);
+  const seedString = completedSeed.join('-');
 
-  seedArray.push(completedSeed.join('-'));
+  generateQrCode(seedString);
+
+  seedArray.push(seedString);
 }
 
 const citizenSeeds = {
@@ -44,4 +48,14 @@ function addComponents(seedArray) {
 
     return addComponents(seedArray);
   }
+}
+
+function generateQrCode(string) {
+  QRCode.toFile(`./qrCodes/${string}.png`, string, {
+    width: 800,
+  }, (err) => {
+    if (err) throw err;
+
+    console.log('saved qrcode for '  + string);
+  });
 }
